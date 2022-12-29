@@ -1,0 +1,22 @@
+#!/bin/zsh
+mkdir user_code
+
+mv Src/retarget.c user_code
+mv Inc/retarget.h user_code
+
+mv Src/myMain.cpp user_code
+mv Inc/myMain.hpp user_code
+
+
+stm32pio generate
+
+mv user_code/retarget.c Src/retarget.c
+mv user_code/retarget.h Inc/retarget.h
+
+mv user_code/myMain.cpp Src/myMain.cpp
+mv user_code/myMain.hpp Inc/myMain.hpp
+
+
+rm -r user_code
+mv Src/main.c Src/main.cpp
+./injector.py Src/main.cpp

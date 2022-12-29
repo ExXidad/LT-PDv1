@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+mv Inc include
+mv Src src
