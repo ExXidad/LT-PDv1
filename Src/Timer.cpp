@@ -6,17 +6,17 @@
 
 void Timer::updateTimerInfo(const bool &print)
 {
-    timerARR_ = timer_->Instance->ARR;
-    timerCCR_ = *timChannelToCCR(timer_, timerChannel_);
-    timerPSC_ = timer_->Instance->PSC;
-    timerFCLK_ = HAL_RCC_GetPCLK2Freq();
+    ARR_ = timer_->Instance->ARR;
+    CCR_ = *timChannelToCCR(timer_, channel);
+    PSC_ = timer_->Instance->PSC;
+    FCLK_ = HAL_RCC_GetPCLK2Freq();
 
     if (print)
     {
-        printf("PCLK 2 freq: %lu\n", timerFCLK_);
-        printf("PWM timer ARR: %lu\n", timerARR_);
-        printf("PWM timer CCR: %lu\n", timerCCR_);
-        printf("PWM timer PSC: %lu\n", timerPSC_);
+        printf("PCLK 2 freq: %lu\n", FCLK_);
+        printf("PWM timer ARR: %lu\n", ARR_);
+        printf("PWM timer CCR: %lu\n", CCR_);
+        printf("PWM timer PSC: %lu\n", PSC_);
     }
 }
 
@@ -51,40 +51,27 @@ void Timer::stop()
 
 Timer::Timer(TIM_HandleTypeDef *timer, uint32_t timerChannel, uint16_t bitDepth) :
         timer_(timer),
-        timerChannel_(timerChannel),
+        channel(timerChannel),
         bitDepth_(bitDepth)
 {
     updateTimerInfo(false);
 }
 
+
 void Timer::writePWM(const uint32_t &pwmFreq, const double &dutyCycle)
 {
-    timer_->Instance->ARR = 1. * timerFCLK_ / pwmFreq / (1 + timerPSC_) - 1.;
-    *timChannelToCCR(timer_, timerChannel_) = dutyCycle * (1. * timerFCLK_ / pwmFreq / (1 + timerPSC_) - 1.);
-    updateTimerInfo(false);
+    timer_->Instance->ARR = 1. * FCLK_ / pwmFreq / (1 + PSC_) - 1.;
+    *timChannelToCCR(timer_, channel) = dutyCycle * (1. * FCLK_ / pwmFreq / (1 + PSC_) - 1.);
+    updateTimerInfo();
 }
 
-int Timer::setPeriod(const double period)
+void Timer::setPeriod(const uint32_t &arr, const uint32_t &psc)
 {
-    const uint64_t cntMax = std::pow(2, 2 * bitDepth_);
-    const uint64_t cnt = period * timerFCLK_;
-//    if (cnt > cntMax)
-//        return 1; // if period is too large
-//    if (cnt < 1)
-//        return 2; // if period is too small
-
-    // It can be smarter
-
-    timer_->Instance->PSC = std::pow(2., bitDepth_) * 0.5 - 1;
-//    timer_->Instance->PSC = 10;
-    timer_->Instance->ARR = 1.*cnt / timer_->Instance->PSC - 1;
-
-    updateTimerInfo(true);
-
-    printf("Asked Period: %d (cnt) \t",cnt);
-    printf("Actual period: %d (cnt)\n", 1. * (timerARR_ + 1) * (timerPSC_ + 1));
-    return 0;
+    timer_->Instance->ARR = arr;
+    timer_->Instance->PSC = psc;
+    updateTimerInfo();
 }
+
 
 bool operator==(const Timer &timerClass, const TIM_HandleTypeDef *timer)
 {

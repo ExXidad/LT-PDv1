@@ -11,23 +11,27 @@
 #include "gpio.h"
 #include "tim.h"
 #include "Timer.hpp"
-
+#include "adc.h"
 
 class QPD
 {
 public:
-    Serial serial_;
     Timer timer_;
-
+    uint32_t *pdMeasurements_;
 public:
     QPD() = default;
 
-    QPD(UART_HandleTypeDef *huart, uint8_t *rxBuffer, TIM_HandleTypeDef *timer,
-        uint32_t timerChannel);
+    QPD(TIM_HandleTypeDef *timer, uint32_t timerChannel,
+        uint32_t *pdMeasurements);
 
     void disableOpAmps();
     void enableOpAmps();
 
+    // ADC section
+public:
+    ADC_HandleTypeDef *adcs[4]{&hadc1, &hadc2, &hadc3, &hadc4};
+
+    [[noreturn]] void testADC();
 };
 
 

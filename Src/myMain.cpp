@@ -4,18 +4,38 @@
 #include "myMain.hpp"
 
 uint8_t rxBuffer[MAXMESSAGELENGTH];
+uint32_t pdMeasurements[4];
+uint32_t pdVal1, pdVal2, pdVal3, pdVal4;
+uint16_t pdbuf[4];
+uint32_t *pdVals[4]{&pdVal1, &pdVal2, &pdVal3, &pdVal4};
 QPD qpd;
+ADC_HandleTypeDef *adcs[4]{&hadc1, &hadc2, &hadc3, &hadc4};
+char readyToRead = 0;
 
 [[noreturn]] int myMain()
 {
+    RetargetInit(&huart1);
 
-//    laserController = LaserController(&huart3, rxBuffer, &htim2, TIM_CHANNEL_4);
-    qpd = QPD(&huart1, rxBuffer, &htim4, TIM_CHANNEL_1);
+    qpd = QPD(&htim4, TIM_CHANNEL_1, pdMeasurements);
 
+
+    for (int i = 0; i < 4; ++i)
+    {
+        HAL_ADC_Start_IT(adcs[i]);
+    }
+
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+
+    qpd.enableOpAmps();
+//    HAL_ADC_Start(&hadc1);
     while (1)
     {
-//        laserController.pasteThisToMainLoop();
-//        HAL_Delay();
+//        printf("%X\n",readyToRead);
+//        HAL_Delay(100);
+//        printf("asked\n");
+//        HAL_ADC_Start_DMA(&hadc1,(uint32_t *)pdbuf,4);
+//        for (int i = 0; i < 4; ++i) // Start adcs
+//            HAL_ADC_Start_DMA(adcs[i], pdVals[i], 1);
     }
 }
 
@@ -30,7 +50,28 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (qpd.timer_ == htim)
     {
-    printf("%u", ++counter);
-    printf("\n");
+//    printf("%u", ++counter);
+//    printf("\n");
     }
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+//    for (int i = 0; i < 4; ++i)
+//        if (adcs[i] == hadc){
+//            printf("ADC%d %ld \n",i, HAL_ADC_GetValue(adcs[i]));
+//        }
+    // Set flag for each adc available to read
+    for (int i = 0; i < 4; ++i)
+        if (hadc == adcs[i])
+            readyToRead |= (1 << i);
+    if (readyToRead == 0xF)
+    {
+        for (int i = 0; i < 4; ++i)
+            printf("%lu\t", HAL_ADC_GetValue(adcs[i]));
+        printf("\n");
+        readyToRead = 0;
+    }
+//    if (hadc == &hadc1)
+//        printf("%lu\n", HAL_ADC_GetValue(&hadc1));
 }
