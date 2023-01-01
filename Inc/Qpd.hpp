@@ -31,7 +31,7 @@ public:
 public:
     ADC_HandleTypeDef *adcs[4]{&hadc1, &hadc2, &hadc3, &hadc4};
 
-    [[noreturn]] void testADC();
+    void calibrate();
 };
 
 

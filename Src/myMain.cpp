@@ -6,18 +6,20 @@
 uint8_t rxBuffer[MAXMESSAGELENGTH];
 uint32_t pdMeasurements[4];
 uint32_t pdVal1, pdVal2, pdVal3, pdVal4;
-uint16_t pdbuf[4];
+constexpr uint16_t bufSize = 128;
+uint16_t buffers[4][bufSize];
 uint32_t *pdVals[4]{&pdVal1, &pdVal2, &pdVal3, &pdVal4};
 QPD qpd;
 ADC_HandleTypeDef *adcs[4]{&hadc1, &hadc2, &hadc3, &hadc4};
-char readyToRead = 0;
+char readyToRead = 0;// 8 bit 0000 1111
 
 [[noreturn]] int myMain()
 {
     RetargetInit(&huart1);
 
     qpd = QPD(&htim4, TIM_CHANNEL_1, pdMeasurements);
-
+//    qpd.enableOpAmps();
+//    qpd.calibrate();
 
     for (int i = 0; i < 4; ++i)
     {

@@ -22,14 +22,17 @@ void QPD::enableOpAmps()
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_12, GPIO_PIN_RESET);
 }
 
-[[noreturn]] void QPD::testADC()
+void QPD::calibrate()
 {
-    disableOpAmps();
+    printf("Calibrating adc's\n");
     for (int i = 0; i < 4; ++i) // Stop adcs
         HAL_ADC_Stop(adcs[i]);
     for (int i = 0; i < 4; ++i) // Calibration
         HAL_ADCEx_Calibration_Start(adcs[i], ADC_SINGLE_ENDED);
-    enableOpAmps();
+    printf("Calibration values: ");
+    for (int i = 0; i < 4; ++i)
+        printf("%lu\t",HAL_ADCEx_Calibration_GetValue(adcs[i], ADC_SINGLE_ENDED));
+    printf("\n");
 //
 //
 //    uint measNumber = 0;
