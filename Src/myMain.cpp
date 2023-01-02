@@ -5,13 +5,18 @@
 
 uint8_t rxBuffer[MAXMESSAGELENGTH];
 uint32_t pdMeasurements[4];
-uint32_t pdVal1, pdVal2, pdVal3, pdVal4;
-constexpr uint16_t bufSize = 128;
-uint16_t buffers[4][bufSize];
-uint32_t *pdVals[4]{&pdVal1, &pdVal2, &pdVal3, &pdVal4};
+constexpr uint16_t bufSize = 16;
+uint16_t buffer[4][bufSize]{};
 QPD qpd;
 ADC_HandleTypeDef *adcs[4]{&hadc1, &hadc2, &hadc3, &hadc4};
 char readyToRead = 0;// 8 bit 0000 1111
+
+void startADC()
+{
+    for (int i = 0; i < 4; ++i)
+        HAL_ADC_Start_DMA(adcs[i], (uint32_t *) buffer[i], bufSize);
+}
+
 
 [[noreturn]] int myMain()
 {
@@ -21,15 +26,17 @@ char readyToRead = 0;// 8 bit 0000 1111
 //    qpd.enableOpAmps();
 //    qpd.calibrate();
 
-    for (int i = 0; i < 4; ++i)
-    {
-        HAL_ADC_Start_IT(adcs[i]);
-    }
+    startADC();
+//    for (int i = 0; i < 4; ++i)
+//    {
+//        HAL_ADC_Start_IT(adcs[i]);
+//    }
 
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 
     qpd.enableOpAmps();
-//    HAL_ADC_Start(&hadc1);
+
+
     while (1)
     {
 //        printf("%X\n",readyToRead);
@@ -59,21 +66,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 {
-//    for (int i = 0; i < 4; ++i)
-//        if (adcs[i] == hadc){
-//            printf("ADC%d %ld \n",i, HAL_ADC_GetValue(adcs[i]));
-//        }
     // Set flag for each adc available to read
     for (int i = 0; i < 4; ++i)
         if (hadc == adcs[i])
             readyToRead |= (1 << i);
     if (readyToRead == 0xF)
     {
+//        startADC();
         for (int i = 0; i < 4; ++i)
-            printf("%lu\t", HAL_ADC_GetValue(adcs[i]));
+            for (int j = 0; j < bufSize; ++j)
+                printf("%hu ", buffer[i][j]);
+        printf("\t");
+//            printf("%lu\t", HAL_ADC_GetValue(adcs[i]));
         printf("\n");
         readyToRead = 0;
     }
-//    if (hadc == &hadc1)
-//        printf("%lu\n", HAL_ADC_GetValue(&hadc1));
 }
