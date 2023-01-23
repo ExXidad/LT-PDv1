@@ -7,7 +7,7 @@
 void Timer::updateTimerInfo(const bool &print)
 {
     ARR_ = timer_->Instance->ARR;
-    CCR_ = *timChannelToCCR(timer_, channel);
+    CCR_ = *timChannelToCCR(timer_, channel_);
     PSC_ = timer_->Instance->PSC;
     FCLK_ = HAL_RCC_GetPCLK2Freq();
 
@@ -51,17 +51,17 @@ void Timer::stop()
 
 Timer::Timer(TIM_HandleTypeDef *timer, uint32_t timerChannel, uint16_t bitDepth) :
         timer_(timer),
-        channel(timerChannel),
+        channel_(timerChannel),
         bitDepth_(bitDepth)
 {
     updateTimerInfo(false);
 }
 
 
-void Timer::writePWM(const uint32_t &pwmFreq, const double &dutyCycle)
+void Timer::setPWM(const uint32_t &pwmFreq, const double dutyCycle)
 {
     timer_->Instance->ARR = 1. * FCLK_ / pwmFreq / (1 + PSC_) - 1.;
-    *timChannelToCCR(timer_, channel) = dutyCycle * (1. * FCLK_ / pwmFreq / (1 + PSC_) - 1.);
+    *timChannelToCCR(timer_, channel_) = dutyCycle * (1. * FCLK_ / pwmFreq / (1 + PSC_) - 1.);
     updateTimerInfo();
 }
 
@@ -69,6 +69,22 @@ void Timer::setPeriod(const uint32_t &arr, const uint32_t &psc)
 {
     timer_->Instance->ARR = arr;
     timer_->Instance->PSC = psc;
+    updateTimerInfo();
+}
+
+void Timer::startPWM()
+{
+    HAL_TIM_PWM_Start(timer_, channel_);
+}
+
+void Timer::stopPWM()
+{
+    HAL_TIM_PWM_Stop(timer_, channel_);
+}
+
+void Timer::setDuty(const double dutyCycle)
+{
+    *timChannelToCCR(timer_, channel_) = (dutyCycle > 1. ? 1. : (dutyCycle < 0 ? 0. : dutyCycle)) * ARR_;
     updateTimerInfo();
 }
 

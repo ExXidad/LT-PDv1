@@ -291,7 +291,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
       Error_Handler();
     }
 
-    /* ADC1 clock enable */
+    /* ADC1 clock start */
     HAL_RCC_ADC12_CLK_ENABLED++;
     if(HAL_RCC_ADC12_CLK_ENABLED==1){
       __HAL_RCC_ADC12_CLK_ENABLE();
@@ -346,7 +346,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
       Error_Handler();
     }
 
-    /* ADC2 clock enable */
+    /* ADC2 clock start */
     HAL_RCC_ADC12_CLK_ENABLED++;
     if(HAL_RCC_ADC12_CLK_ENABLED==1){
       __HAL_RCC_ADC12_CLK_ENABLE();
@@ -401,7 +401,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
       Error_Handler();
     }
 
-    /* ADC3 clock enable */
+    /* ADC3 clock start */
     HAL_RCC_ADC345_CLK_ENABLED++;
     if(HAL_RCC_ADC345_CLK_ENABLED==1){
       __HAL_RCC_ADC345_CLK_ENABLE();
@@ -456,7 +456,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
       Error_Handler();
     }
 
-    /* ADC4 clock enable */
+    /* ADC4 clock start */
     HAL_RCC_ADC345_CLK_ENABLED++;
     if(HAL_RCC_ADC345_CLK_ENABLED==1){
       __HAL_RCC_ADC345_CLK_ENABLE();
@@ -506,7 +506,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
   /* USER CODE BEGIN ADC1_MspDeInit 0 */
 
   /* USER CODE END ADC1_MspDeInit 0 */
-    /* Peripheral clock disable */
+    /* Peripheral clock stop */
     HAL_RCC_ADC12_CLK_ENABLED--;
     if(HAL_RCC_ADC12_CLK_ENABLED==0){
       __HAL_RCC_ADC12_CLK_DISABLE();
@@ -521,13 +521,13 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     HAL_DMA_DeInit(adcHandle->DMA_Handle);
 
     /* ADC1 interrupt Deinit */
-  /* USER CODE BEGIN ADC1:ADC1_2_IRQn disable */
+  /* USER CODE BEGIN ADC1:ADC1_2_IRQn stop */
     /**
-    * Uncomment the line below to disable the "ADC1_2_IRQn" interrupt
+    * Uncomment the line below to stop the "ADC1_2_IRQn" interrupt
     * Be aware, disabling shared interrupt may affect other IPs
     */
     /* HAL_NVIC_DisableIRQ(ADC1_2_IRQn); */
-  /* USER CODE END ADC1:ADC1_2_IRQn disable */
+  /* USER CODE END ADC1:ADC1_2_IRQn stop */
 
   /* USER CODE BEGIN ADC1_MspDeInit 1 */
 
@@ -538,7 +538,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
   /* USER CODE BEGIN ADC2_MspDeInit 0 */
 
   /* USER CODE END ADC2_MspDeInit 0 */
-    /* Peripheral clock disable */
+    /* Peripheral clock stop */
     HAL_RCC_ADC12_CLK_ENABLED--;
     if(HAL_RCC_ADC12_CLK_ENABLED==0){
       __HAL_RCC_ADC12_CLK_DISABLE();
@@ -553,13 +553,13 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     HAL_DMA_DeInit(adcHandle->DMA_Handle);
 
     /* ADC2 interrupt Deinit */
-  /* USER CODE BEGIN ADC2:ADC1_2_IRQn disable */
+  /* USER CODE BEGIN ADC2:ADC1_2_IRQn stop */
     /**
-    * Uncomment the line below to disable the "ADC1_2_IRQn" interrupt
+    * Uncomment the line below to stop the "ADC1_2_IRQn" interrupt
     * Be aware, disabling shared interrupt may affect other IPs
     */
     /* HAL_NVIC_DisableIRQ(ADC1_2_IRQn); */
-  /* USER CODE END ADC2:ADC1_2_IRQn disable */
+  /* USER CODE END ADC2:ADC1_2_IRQn stop */
 
   /* USER CODE BEGIN ADC2_MspDeInit 1 */
 
@@ -570,7 +570,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
   /* USER CODE BEGIN ADC3_MspDeInit 0 */
 
   /* USER CODE END ADC3_MspDeInit 0 */
-    /* Peripheral clock disable */
+    /* Peripheral clock stop */
     HAL_RCC_ADC345_CLK_ENABLED--;
     if(HAL_RCC_ADC345_CLK_ENABLED==0){
       __HAL_RCC_ADC345_CLK_DISABLE();
@@ -595,7 +595,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
   /* USER CODE BEGIN ADC4_MspDeInit 0 */
 
   /* USER CODE END ADC4_MspDeInit 0 */
-    /* Peripheral clock disable */
+    /* Peripheral clock stop */
     HAL_RCC_ADC345_CLK_ENABLED--;
     if(HAL_RCC_ADC345_CLK_ENABLED==0){
       __HAL_RCC_ADC345_CLK_DISABLE();

@@ -91,7 +91,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
       Error_Handler();
     }
 
-    /* USART1 clock enable */
+    /* USART1 clock start */
     __HAL_RCC_USART1_CLK_ENABLE();
 
     __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -120,7 +120,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
   /* USER CODE BEGIN USART1_MspDeInit 0 */
 
   /* USER CODE END USART1_MspDeInit 0 */
-    /* Peripheral clock disable */
+    /* Peripheral clock stop */
     __HAL_RCC_USART1_CLK_DISABLE();
 
     /**USART1 GPIO Configuration

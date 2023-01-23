@@ -12,7 +12,7 @@
 struct Timer
 {
     TIM_HandleTypeDef *timer_ = nullptr;
-    uint32_t channel = 0u;
+    uint32_t channel_ = 0u;
     uint32_t FCLK_ = 0u, ARR_ = 0u, CCR_ = 0u, PSC_ = 0u;
     uint16_t bitDepth_ = 0u;
 
@@ -22,8 +22,11 @@ struct Timer
     Timer() = default;
     Timer(TIM_HandleTypeDef *timer, uint32_t timerChannel, uint16_t bitDepth = 16u);
     void start();
+    void startPWM();
     void stop();
-    void writePWM(const uint32_t &pwmFreq, const double &dutyCycle);
+    void stopPWM();
+    void setPWM(const uint32_t &pwmFreq, const double dutyCycle);
+    void setDuty(const double dutyCycle);
     void setPeriod(const uint32_t &arr, const uint32_t &psc);
 };
 

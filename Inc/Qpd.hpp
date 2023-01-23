@@ -12,6 +12,7 @@
 #include "tim.h"
 #include "Timer.hpp"
 #include "adc.h"
+#include "spi.h"
 
 class QPD
 {
