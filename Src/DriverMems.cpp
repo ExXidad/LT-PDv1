@@ -16,6 +16,7 @@ DriverMEMS::DriverMEMS(TIM_HandleTypeDef *clkHtim, const uint32_t clkHtimChannel
 
 void DriverMEMS::start()
 {
+    HAL_Delay(100); // Startup delay
     clkTimer_.startPWM(); // Start CLK
     xAxis_->start(); // Enable axes PWM
     yAxis_->start();
